@@ -34,6 +34,8 @@ use \InvalidArgumentException;
  */
 class ScrambleVariable extends ScramblerVisitor
 {
+    private $ignoringNames = [];
+    
     /**
      * Constructor
      *
@@ -58,8 +60,12 @@ class ScrambleVariable extends ScramblerVisitor
      **/
     public function enterNode(Node $node)
     {
+        if ($node instanceof Param) {
+            $this->addIgnore($node->name);
+        }
+        
         // Function param or variable use
-        if ($node instanceof Param || $node instanceof StaticVar || $node instanceof Variable) {
+        if ($node instanceof StaticVar || $node instanceof Variable) {
             return $this->scramble($node);
         }
 
